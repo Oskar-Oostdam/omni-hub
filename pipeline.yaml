@@ -1,0 +1,26 @@
+name: Test pipeline
+
+trigger: none
+
+pool:
+  name: "Ubuntu Pool"
+
+jobs:
+- job: TestJob
+  displayName: 'Run Linux Agent Test Job'
+  steps:
+  
+  - script: echo "Hello, world! This job is running on a self-hosted Linux agent."
+    displayName: '1. Run simple echo script'
+
+  - bash: |
+      echo "---"
+      echo "Running on agent: $(Agent.Name)"
+      echo "Operating System: $(Agent.OS) ($(Agent.OSArchitecture))"
+      echo "Agent version: $(Agent.Version)"
+      echo "Working directory: $(Agent.WorkFolder)"
+      echo "---"
+      echo "Verifying Ubuntu version..."
+      cat /etc/os-release
+      echo "---"
+    displayName: '2. Print Agent Details (Bash)'
