@@ -1,34 +1,34 @@
-# This pipeline triggers on any push to the 'main' branch
-trigger:
-- main
+name: Test docker container
 
-# THIS IS THE MOST IMPORTANT PART
-# Point the pipeline to your self-hosted agent pool
+trigger: none
+
 pool:
-  name: 'Your-Self-Hosted-Pool-Name' # <-- CHANGE THIS to the exact name of your agent pool
+  name: 'Ubuntu Pool'
 
-# The job steps
-steps:
-- script: |
-    echo "Stopping and removing any old 'my-app' container..."
-    docker stop my-app || true
-    docker rm my-app || true
-  displayName: '1. Stop and Remove Old Container'
+jobs:
+- job: TestJob
+  displayName: 'Run Linux Agent Test Job'
+  steps:
+  - script: |
+      echo "Stopping and removing any old 'my-app' container..."
+      docker stop my-app || true
+      docker rm my-app || true
+    displayName: '1. Stop and Remove Old Container'
 
-- script: |
-    echo "Building the Docker image from the Dockerfile..."
-    docker build -t my-streamlit-app .
-  displayName: '2. Build New Docker Image'
+  - script: |
+      echo "Building the Docker image from the Dockerfile..."
+      docker build -t my-streamlit-app .
+    displayName: '2. Build New Docker Image'
 
-- script: |
-    echo "Running the new container, bound to localhost:8501..."
-    docker run -d --rm \
-      -p 127.0.0.1:8501:8501 \
-      --name my-app \
-      my-streamlit-app
-  displayName: '3. Run New Streamlit Container'
+  - script: |
+      echo "Running the new container, bound to localhost:8501..."
+      docker run -d --rm \
+        -p 127.0.0.1:8501:8501 \
+        --name my-app \
+        my-streamlit-app
+    displayName: '3. Run New Streamlit Container'
 
-- script: |
-    echo "Pipeline finished. The app is now running in the background on the agent."
-    echo "You can check its status on the agent with: docker ps"
-  displayName: '4. Deployment Complete'
+  - script: |
+      echo "Pipeline finished. The app is now running in the background on the agent."
+      echo "You can check its status on the agent with: docker ps"
+    displayName: '4. Deployment Complete'
